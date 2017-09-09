@@ -213,6 +213,16 @@
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+    if (iterator === undefined) {
+        return _.reduce(collection, function(bool, element) {
+          return !element ? bool : bool = true;
+        }, false);
+    }
+    else {
+      return _.reduce(collection, function(bool, element) {
+        return !iterator (element) ? bool : bool = true;
+      }, false);
+    }
     // TIP: There's a very clever way to re-use every() here.
   };
 
