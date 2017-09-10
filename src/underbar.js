@@ -55,10 +55,10 @@
       for (var i = 0; i < collection.length; i++) {
         iterator (collection[i], i, collection);
       }
-    }
+    } 
     else {
-      for (var keys in collection) {
-        iterator (collection[keys], keys, collection);         
+      for (var key in collection) {
+        iterator (collection[key], key, collection);         
       }
     }
   };
@@ -82,26 +82,34 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
-    var iterator = [];
+    var result = [];
     _.each (collection, function (element) {
       if (test (element)) {
-        iterator.push (element);
+        result.push (element);
       }
     });
-    return iterator;
+    return result;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
-    var iterator = [];
-    _.each (collection, function (element) {
-      if (!test (element)) {
-        iterator.push (element);
-      }
-    });
-    return iterator;
+    // var result = [];
+    // _.each (collection, function (element) {
+    //   if (!test (element)) {
+    //     result.push (element);
+    //   }
+    // });
+    // return result;
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    var filtered = _.filter (collection, test);
+    var result = [];
+    _.each (collection, function (element) {
+      if (!filtered.includes (element)) {
+        result.push (element);
+      }
+    });
+    return result;
   };
 
   // Produce a duplicate-free version of the array.
@@ -246,11 +254,34 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    var args = Array.prototype.slice.call(arguments);
+    _.each (args.slice (1, args.length), function (obj) {
+      _.each (obj, function (element, key) {
+        args[0][key] = element;
+      });
+    });
+    return args[0];
+
+    // var args = Array.prototype.slice.call(arguments);
+    // var objects = args.slice(1);
+    // return _.reduce (objects, function(result, element) {
+    //   result[key] = element;
+    //   return result;
+    // }, args[0]);
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var args = Array.prototype.slice.call(arguments);
+    _.each (args.slice (1, args.length), function (obj) {
+      _.each (obj, function (element, key) {
+        if (args[0][key] === undefined) {
+          args[0][key] = element;
+        }
+      });
+    });
+    return args[0];
   };
 
 
@@ -294,6 +325,17 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var result = [];
+    var inputs = [];
+    var funcUnique = func.toString ();
+    return function() {
+      if (!_.contains(inputs, funcUnique)) {
+        result.push (func.apply(this, arguments));
+        inputs.push (funcUnique);
+        //return result[inputs.indexOf(funcUnique)];
+      }
+      return result[inputs.indexOf(funcUnique)];
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
