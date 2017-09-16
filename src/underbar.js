@@ -318,13 +318,30 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    // var results = [];
+    // var inputs = [];
+    // return function() {
+    //   var args = Array.prototype.slice.call(func(arguments));
+    //   var funcUnique = "";
+    //   _.each(args, function(element) {
+    //     funcUnique = funcUnique.concat (element);
+    //   })
+    //   if (!_.contains(inputs, funcUnique)) {
+    //     results.push (func.apply(this, arguments));
+    //     inputs.push (funcUnique);
+    //   } 
+    //   else {
+    //     return results[_.indexOf(inputs, funcUnique)];
+    //   }
+    // }
+    //var alreadyCalled = false;
     var resultsMap = {};
 
     return function() {
       var result;
       var args = JSON.stringify(Array.prototype.slice.call(arguments))
       if (!(args in resultsMap)) {
-        result = func.apply(this, arguments);
+        result = func.apply (this, arguments);
         resultsMap[args] = result; 
       }
       return resultsMap[args]; 
